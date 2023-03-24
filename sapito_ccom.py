@@ -1,5 +1,6 @@
 import turtle
 import random
+from sapito import Player
 import time
 
 
@@ -119,6 +120,98 @@ def build_world():
 
 # # Set up the pause variable
 # paused = False
+# Create pen turtle to write on the screen
+pen = turtle.Turtle()
+pen.hideturtle()
+# Set up the pause variable
+paused = False
+
+def pause_game():
+    global paused
+    if not paused:
+        paused = True
+
+        # hide the turtle and clear its drawings
+        for t in screen.turtles():
+            t.hideturtle()
+            #t.clear()
+        #player.hideturtle()
+        #player.clear()
+
+        # write the "Paused" text
+        pen.clear()
+        pen.color("white")
+        pen.write("Paused", align="center", font=("Arial", 50, "normal"))
+
+        # write the "Press Enter to continue" text
+        pen.penup()
+        pen.goto(0, -75)
+        pen.pendown()
+        pen.write("Press Escape to continue", align="center", font=("Arial", 20, "normal"))
+
+        # write the "Press Q to quit" text
+        pen.penup()
+        pen.goto(0, -150)
+        pen.pendown()
+        pen.write("Press Q to quit", align="center", font=("Arial", 20, "normal"))
+
+        # write the "Press R to restart" text
+        pen.penup()
+        pen.goto(0, -225)
+        pen.pendown()
+        pen.write("Press R to restart", align="center", font=("Arial", 20, "normal"))
+
+    else:
+        paused = False
+        # reset pen position
+        pen.penup()
+        pen.goto(0, 0)
+
+
+        # show the turtle and restore its last action
+
+        #player.undo()
+
+        # clear the "Paused" text
+        pen.clear()
+
+        # Update the screen
+        screen.update()
+        for t in screen.turtles():
+            t.undo()
+            #t.showturtle()
+        #player.showturtle()
+
+def quit_game():
+    global paused
+    if paused:
+        screen.bye()
+        # exit the program
+        exit()
+
+def restart_game():
+    global paused
+    if paused:
+        # reset the turtle position
+        #t.penup()
+        #t.goto(0, 0)
+        #t.pendown()
+        #t.setheading(0)
+
+        # reset the pen position
+        pen.penup()
+        pen.goto(0, 0)
+        pen.pendown()
+
+        # reset the paused variable
+        paused = False
+
+        # clear the "Paused" text
+        pen.clear()
+
+        # Update the screen
+        screen.update()
+        #t.showturtle()
 
 # def pause_game():
 #     global paused
@@ -219,8 +312,21 @@ def spawn_logs():
     # logs.append(log4)
     return logs
 
-screen = build_world()
 
+
+
+screen = build_world()
+player = Player(screen,'pink')
+
+screen.onkeypress(player.up, 'i')
+screen.onkeypress(player.down, 'k')
+screen.onkeypress(player.left, 'j')
+screen.onkeypress(player.right, 'l')
+
+screen.onkeypress(pause_game, 'Escape')
+screen.onkeypress(quit_game, 'q')
+screen.onkeypress(restart_game, 'r')
+screen.listen()
 # Main game loop
 while True:
     
