@@ -6,34 +6,19 @@ import time
 
 # make the log objects
 class Log(turtle.Turtle):
-   def __init__(self, x, y):
-    self.x = x
-    self.y = y
-    self.turtle = turtle.Turtle()
-    self.turtle.penup()
-    self.turtle.hideturtle()
-    self.turtle.goto(x, y)
-    self.turtle.setheading(0)
-    self.turtle.pendown()
-    self.turtle.fillcolor("brown")
-    self.turtle.begin_fill()
-    for i in range(2):
-        self.turtle.forward(180)
-        self.turtle.left(90)
-        self.turtle.forward(60)
-        self.turtle.left(90)
-    self.turtle.end_fill()
+    def __init__(self, x, y, speed):
+        super().__init__(shape="square")
+        self.shapesize(stretch_wid=3, stretch_len=7)
+        self.penup()
+        self.goto(x, y)
+        self.color("brown")
+        self.speed = speed
 
     def move(self):
-        # the logs will only move from left to right for now
-        self.forward(self.speed)
+        self.goto(self.xcor() - self.speed, self.ycor())
+        if self.xcor() < -400:
+            self.goto(400, self.ycor())
 
-        # if the log start to go off the screen, move it to the other side
-        if self.xcor() > screen.window_width() / 2:
-            self.goto(-screen.window_width() / 2, self.ycor())
-        
-        if self.xcor() < -screen.window_width() / 2:
-            self.goto(screen.window_width() / 2, self.ycor())
 
 
 
@@ -304,13 +289,36 @@ def restart_game():
 
 # spawn the logs
 def spawn_logs():
-    logs = []
-    log1 = Log(-375, -225)
-    # logs.append(log1)
-    # logs.append(log2)
-    # logs.append(log3)
-    # logs.append(log4)
-    return logs
+    # spawn 2 in both blue areas
+    logs_for_area1 = []
+    logs_for_area2 = []
+
+    # spawn 2 logs in the first blue area
+    # the x could be anywhere between -375 and 180
+    x1 = random.randint(-375, 180)
+    x2 = random.randint(-375, 180)
+    log1 = Log(x1, -190, 2)
+    log2 = Log(x2, -110, 1)
+    logs_for_area1.append(log1)
+    logs_for_area1.append(log2)
+
+    # spawn 2 logs in the second blue area
+    # the x could be anywhere between -375 and 180
+    x1 = random.randint(-375, 180)
+    x2 = random.randint(-375, 180)
+    log1 = Log(x1, 110, 2)
+    log2 = Log(x2, 190, 1)
+    logs_for_area2.append(log1)
+    logs_for_area2.append(log2)
+
+    screen.update()
+    
+    return logs_for_area1, logs_for_area2
+
+
+
+
+
 
 
 
@@ -322,6 +330,10 @@ screen.onkeypress(player.up, 'i')
 screen.onkeypress(player.down, 'k')
 screen.onkeypress(player.left, 'j')
 screen.onkeypress(player.right, 'l')
+logs_for_area1, logs_for_area2 = spawn_logs()
+
+
+
 
 screen.onkeypress(pause_game, 'Escape')
 screen.onkeypress(quit_game, 'q')
@@ -329,10 +341,9 @@ screen.onkeypress(restart_game, 'r')
 screen.listen()
 # Main game loop
 while True:
-    
-    spawn_logs()
-
-
-    # Update the screen
+    for log in logs_for_area1:
+        log.move()
+    for log in logs_for_area2:
+        log.move()
     screen.update()
-
+    time.sleep(0.1)
